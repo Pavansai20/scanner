@@ -1,0 +1,194 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcomScanner</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      background-color: #f4f6f8;
+      color: #333;
+    }
+    header {
+      background: linear-gradient(to right, #ff5f6d, #ffc371);
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 3.5rem;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    header p {
+      font-size: 1.5rem;
+      margin-top: 10px;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.4);
+    }
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+    .search-box {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 30px;
+    }
+    input {
+      padding: 12px;
+      font-size: 1rem;
+      flex: 1;
+      max-width: 400px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
+    button {
+      padding: 12px 20px;
+      background-color: #ff4b2b;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #ff416c;
+    }
+    .products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card img {
+      width: 100%;
+      height: 200px;
+      object-fit: contain;
+      background: #fff;
+    }
+    .card-body {
+      padding: 15px;
+    }
+    .card-body h3 {
+      margin: 0 0 10px;
+      font-size: 1.1rem;
+    }
+    .card-body p {
+      margin: 5px 0;
+    }
+    .card-body a {
+      text-decoration: none;
+      color: #007bff;
+      font-weight: bold;
+    }
+    .card-body a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>EcomScanner</h1>
+    <p>Compare Prices. Shop Smart.</p>
+  </header>
+
+  <div class="container">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search e.g. iphone 16 or macbook air m3 256gb">
+      <button onclick="handleSearch()">Search</button>
+    </div>
+    <div class="products" id="productList"></div>
+  </div>
+
+  <script>
+    const mockData = {
+      "iphone 16": [
+        {
+          name: "iPhone 16 - Amazon",
+          price: 73400,
+          image: "https://m.media-amazon.com/images/I/71yzJoE7WlL._AC_SL1500_.jpg",
+          platform: "Amazon",
+          link: "https://amzn.in/d/3lbXTVl"
+        },
+        {
+          name: "iPhone 16 - Flipkart",
+          price: 74900,
+          image: "https://store.storeimages.cdn-apple.com/1/as-images.apple.com/is/iphone-16-pro-finish-select-202409-6-3inch-naturaltitanium_FMT_WHH?wid=1280&hei=492&fmt=p-jpg",
+          platform: "Flipkart",
+          link: "https://www.flipkart.com/apple-iphone-16-white-128-gb/p/itm7c0281cd247be"
+        },
+        {
+          name: "iPhone 16 - Croma",
+          price: 71490,
+          image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTPVhZBaeSvfpxTBDSVEREiwqDY02VQ9V0QSA&s",
+          platform: "Croma",
+          link: "https://www.croma.com/apple-iphone-16-128gb-black-/p/309621"
+        }
+      ],
+      "macbook air m3 256gb": [
+        {
+          name: "MacBook Air M3 - Amazon",
+          price: 114990,
+          image: "https://m.media-amazon.com/images/I/71x9JI-Il0L._SX679_.jpg",
+          platform: "Amazon",
+          link: "https://amzn.in/d/aV22hsT"
+        },
+        {
+          name: "MacBook Air M3 - Flipkart",
+          price: 115900,
+          image: "https://media-ik.croma.com/prod/https://media.croma.com/image/upload/v1709727304/Croma%20Assets/Computers%20Peripherals/Laptop/Images/305382_uvrdrb.png?tr=w-1000",
+          platform: "Flipkart",
+          link: "https://www.flipkart.com/apple-macbook-air-m3-8-gb-256-gb-ssd-macos-sonoma-mrxt3hn-a/p/itm2ea42dec44bca"
+        },
+        {
+          name: "MacBook Air M3 - Croma",
+          price: 114900,
+          image: "https://media-ik.croma.com/prod/https://media.croma.com/image/upload/v1709727304/Croma%20Assets/Computers%20Peripherals/Laptop/Images/305382_uvrdrb.png?tr=w-1000",
+          platform: "Croma",
+          link: "https://www.croma.com/apple-macbook-air-2024-13-6-inch-m3-8gb-256gb-macos-sequoia-midnight-/p/305382"
+        }
+      ]
+    };
+
+    function handleSearch() {
+      const query = document.getElementById("searchInput").value.trim().toLowerCase();
+      const productList = document.getElementById("productList");
+      productList.innerHTML = "";
+      const results = mockData[query];
+      if (!results) {
+        productList.innerHTML = "<p>No results found. Try something like 'iphone 16'</p>";
+        return;
+      }
+
+      results.forEach(product => {
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `
+          <img src="${product.image}" alt="${product.name}" />
+          <div class="card-body">
+            <h3>${product.name}</h3>
+            <p>Price: ₹${product.price}</p>
+            <p>Platform: ${product.platform}</p>
+            <a href="${product.link}" target="_blank">View on ${product.platform}</a>
+          </div>
+        `;
+        productList.appendChild(card);
+      });
+    }
+  </script>
+</body>
+</html>
